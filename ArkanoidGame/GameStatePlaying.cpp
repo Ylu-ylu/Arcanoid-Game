@@ -66,12 +66,13 @@ namespace ArkanoidGame
 
 	void GameStatePlayingData::Update(float timeDelta)
 	{
-		static auto updateFunctor = [timeDelta](auto obj) { obj->Update(timeDelta); };
-
-		std::for_each(gameObjects.begin(), gameObjects.end(), updateFunctor);
-		
+				
 		auto platformObj = std::dynamic_pointer_cast<Platform>(gameObjects[0]);
 		auto ballObj = std::dynamic_pointer_cast<Ball>(gameObjects[1]);
+
+		ballObj->Update(timeDelta);
+		platformObj->Update(timeDelta);
+
 
 		auto isCollision = platformObj->CheckCollisionWhithBall(*ballObj);
 		auto isCollisionWithSides = platformObj->CheckCollisionWithWindowSides();
@@ -132,10 +133,10 @@ namespace ArkanoidGame
 	{
 		// Draw background
 		window.draw(background);
-
-		static auto drawFunc = [&window](auto block) { block->Draw(window); };
-		// Draw game objects
-		std::for_each(gameObjects.begin(), gameObjects.end(), drawFunc);
+		auto ballObj = std::dynamic_pointer_cast<Ball>(gameObjects[1]);
+		ballObj->Draw(window);
+		auto platformObj = std::dynamic_pointer_cast<Platform>(gameObjects[0]);
+		platformObj->Draw(window);		
 		
 		scoreText.setOrigin(GetTextOrigin(scoreText, { 0.f, 0.f }));
 		scoreText.setPosition(10.f, 10.f);

@@ -14,10 +14,7 @@ namespace ArkanoidGame
 		sprite.setPosition(position);
 	}
 
-	void GameObject::Draw(sf::RenderWindow& window)
-	{
-		DrawSprite(sprite, window);
-	}
+	
 	void GameObject::restart()
 	{
 		sprite.setPosition(startPosition);
