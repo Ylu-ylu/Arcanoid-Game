@@ -10,6 +10,7 @@ namespace ArkanoidGame
 	class Platform;
 	class Ball;
 	class GameObject;
+	class Block;
 	
 	class GameStatePlayingData : public GameStateData, public std::enable_shared_from_this<GameStatePlayingData>
 	{
@@ -20,7 +21,9 @@ namespace ArkanoidGame
 		void Draw(sf::RenderWindow& window) override;
 
 	private:
-		void GetBallInverse(const sf::Vector2f& ballPos, bool& needInverseDirX,
+		void CreateBlocks();
+		
+		void GetBallInverse(const sf::Vector2f& ballPos, const sf::FloatRect& blockRect, bool& needInverseDirX,
 			bool& needInverseDirY);
 
 		 bool collisionProcessed = false;  // Flag to prevent multiple collision counts
@@ -33,7 +36,9 @@ namespace ArkanoidGame
 
 		// Game data
 		std::vector<std::shared_ptr<GameObject>> gameObjects;
+		std::vector<std::shared_ptr<Block>> blocks;
 
+		//Score
 		int score = 0; // Track player's score
 
 		// UI data

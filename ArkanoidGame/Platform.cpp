@@ -6,6 +6,7 @@
 #include <assert.h>
 
 
+
 namespace
 {
 	const std::string TEXTURE_ID = "platform";
@@ -14,16 +15,9 @@ namespace
 namespace ArkanoidGame
 {
 	Platform::Platform(const sf::Vector2f& position)
-		: GameObject(TEXTURES_PATH + TEXTURE_ID + ".png", position, PLATFORM_WIDTH, PLATFORM_HEIGHT)
+		: GameObject(GameObjectType::Platform, TEXTURES_PATH + TEXTURE_ID + ".png", position, PLATFORM_WIDTH, PLATFORM_HEIGHT)
 	{
 	}
-	void Platform::Init()
-	{
-		assert(texture.loadFromFile(TEXTURES_PATH + TEXTURE_ID + ".png"));
-		InitSprite(sprite, PLATFORM_WIDTH, PLATFORM_HEIGHT, texture);
-		sprite.setPosition(SCREEN_WIDTH/2.f, SCREEN_HEGHT- PLATFORM_HEIGHT/2.f);
-	}
-
 	void Platform::Update(float timeDelta)
 	{
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
@@ -35,54 +29,54 @@ namespace ArkanoidGame
 			Move(timeDelta *PLATFORM_SPEED);
 		}
 	}
-	void Platform::Draw(sf::RenderWindow& window) 
+
+	bool Platform::GetCollision(std::shared_ptr<Colladiable> collidable) const
 	{
-		DrawSprite(sprite, window);
-	}
-	bool Platform::CheckCollisionWhithBall( Ball& ball) const
-	{// Get the platform's rectangle
-		sf::FloatRect platformRect = GetRect();
+		auto ball = std::static_pointer_cast<Ball>(collidable);
+		if (!ball) return false;
 
-		// Get the ball's bounding circle
-		sf::Vector2f ballPosition = ball.GetPosition();
-		float ballRadius = ball.GetSize() / 2.0f;
-		sf::FloatRect ballRect(
-			ballPosition.x - ballRadius,
-			ballPosition.y - ballRadius,
-			ballRadius * 2,
-			ballRadius * 2
-		);
-
-		// Check if the rectangles intersect
-		if (platformRect.intersects(ballRect)) 
+		auto sqr = [](float x) 
+			{
+			return x * x;
+			};
+		const auto rect = sprite.getGlobalBounds();
+		const auto ballPos = ball->GetPosition();
+		if (ballPos.x < rect.left) 
 		{
-			// Ball is colliding with platform
-
-			// Calculate where on the platform the ball hit (from -1.0 to 1.0)
-			float hitPosition = (ballPosition.x - (platformRect.left + platformRect.width / 2)) / (platformRect.width / 2);
-
-			// Clamp the hit position to [-1, 1] range
-			hitPosition = std::max(-1.0f, std::min(hitPosition, 1.0f));
-
-			// Change the ball's angle based on where it hit
-			// This will give different angles depending on where the ball hits the platform
-			// Middle = straight up, edges = more horizontal angle
-			float angle = hitPosition * 60.0f; // 60 degrees max deflection
-
-			// Update the ball's direction
-			ball.ChangeAngle(angle);
-
-			return true;
+			return sqr(ballPos.x - rect.left) + sqr(ballPos.y - rect.top) < sqr(BALL_SIZE / 2.0);
 		}
 
+		if (ballPos.x > rect.left + rect.width) 
+		{
+			return sqr(ballPos.x - rect.left - rect.width) + sqr(ballPos.y - rect.top) < sqr(BALL_SIZE / 2.0);
+		}
+
+		return std::fabs(ballPos.y - rect.top) <= BALL_SIZE / 2.0;
+	}
+
+	bool Platform::CheckCollision(std::shared_ptr<Colladiable> collidable)
+	{
+		auto ball = std::static_pointer_cast<Ball>(collidable);
+		if (!ball)
+			return false;
+
+		if (GetCollision(ball)) 
+		{
+			auto rect = GetSpriteRect();
+			auto ballPosInOlatform = (ball->GetPosition().x - (rect.left + rect.width / 2)) / (rect.width / 2);
+			ball->ChangeAngle(90 - 20 * ballPosInOlatform);
+			return true;
+		}
 		return false;
 	}
+
 	void Platform::Move(float speed)
 	{
 		auto position = sprite.getPosition();
 		position.x = std::min(std::max(position.x + speed, PLATFORM_WIDTH / 2.f), SCREEN_WIDTH - PLATFORM_WIDTH / 2.f);
 		sprite.setPosition(position);
 	}
+			
 	bool Platform::CheckCollisionWithWindowSides() const
 	{
 		const auto position = sprite.getPosition();

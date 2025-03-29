@@ -1,29 +1,32 @@
 #pragma once  
 #include "SFML/Graphics.hpp"  
 #include "GameObject.h"
+#include "Colladiable.h"
 
-namespace ArkanoidGame  
-{  
+
+namespace ArkanoidGame
+{
 	class Ball;
-	
-class Platform: public GameObject
-{  
-public:  
-	Platform(const sf::Vector2f& position);  
 
-	void Init();  
-	void Update(float timeDelta);  
-	void Draw(sf::RenderWindow& window);  
-	void Move(float speed);  
+	class Platform : public GameObject, public Colladiable
+	{
+	public:
+		Platform(const sf::Vector2f& position);
+		~Platform() = default;
+		void Update(float timeDelta);
 
-	bool CheckCollisionWhithBall(Ball & ball) const;  
-	sf::FloatRect GetRect() const { return sprite.getGlobalBounds(); }  
-	const sf::Vector2f& GetPosition() const { return sprite.getPosition(); } 
+		virtual bool GetCollision(std::shared_ptr<Colladiable> collidable) const override;
+		virtual void OnHit() override {}
+		virtual bool CheckCollision(std::shared_ptr<Colladiable> collidable) override;
+		virtual sf::FloatRect GetRect() const { return GetSpriteRect(); }
 
-	bool CheckCollisionWithWindowSides() const;  
-	
-private:  
-	sf::Texture texture;  
-	sf::Sprite sprite;  
-};  
+
+		const sf::Vector2f& GetPosition() const { return sprite.getPosition(); }
+
+		bool CheckCollisionWithWindowSides() const;
+
+	private:
+		void Move(float speed);
+	};
+
 }

@@ -42,11 +42,12 @@ namespace ArkanoidGame
 	public:
 		void HandleWindowEvents(sf::RenderWindow& window);
 		bool Update(float timeDelta); // Return false if game should be closed
-		void Draw(sf::RenderWindow& window);		
-
-	private:
+		void Draw(sf::RenderWindow& window);
 		// Add new game state on top of the stack
 		void PushState(GameStateType stateType, bool isExclusivelyVisible);
+				
+	private:
+		
 		// Remove all game states from the stack and add new one
 		void SwitchStateTo(GameStateType newState);
 		void Shutdown();		

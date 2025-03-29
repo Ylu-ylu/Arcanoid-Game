@@ -3,15 +3,24 @@
 
 namespace ArkanoidGame
 {
+	enum class GameObjectType
+	{
+		Ball,
+		Platform,
+		Block,
+		UnbreackableBlock,
+		Other
+	};
 	class GameObject
 	{
 	public:
-		GameObject(const std::string& textureId, const sf::Vector2f& position, float width, float height);
+		GameObject(GameObjectType type,const std::string& textureId, const sf::Vector2f& position, float width, float height);
 		virtual ~GameObject() = default;
-
+		virtual void Update(float timeDelta) = 0;
+		virtual void Draw(sf::RenderWindow& window);
 
 		const sf::Vector2f& GetPosition() const { return sprite.getPosition(); }
-		sf::FloatRect GetRect() const { return sprite.getGlobalBounds(); }
+		 virtual sf::FloatRect GetSpriteRect() const { return sprite.getGlobalBounds(); }
 		virtual void restart();
 
 	protected:

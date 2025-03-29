@@ -19,150 +19,64 @@ namespace ArkanoidGame
 		{
 		case GameStateType::MainMenu:
 		{
-			data = new GameStateMainMenuData();
-			((GameStateMainMenuData*)data)->Init();			
+			data = std::make_shared<GameStateMainMenuData>();
 			break;
 		}
 		case GameStateType::Playing:
 		{
-			data = new GameStatePlayingData();
-			((GameStatePlayingData*)data)->Init();
+			data = std::make_shared<GameStatePlayingData>();
 			break;
 		}
 		case GameStateType::GameOver:
 		{
-			data = new GameStateGameOverData();
-			((GameStateGameOverData*)data)->Init();
+			data = std::make_shared<GameStateGameOverData>();
 			break;
 		}
 		case GameStateType::GameWin:
 		{
-			data = new GameStateGameWinData();
-			((GameStateGameWinData*)data)->Init();
+			data = std::make_shared<GameStateGameWinData>();
 			break;
 		}
 		case GameStateType::ExitDialog:
 		{
-			data = new GameStatePauseMenuData();
-			((GameStatePauseMenuData*)data)->Init();
+			data = std::make_shared<GameStatePauseMenuData>();
 			break;
 		}
 		case GameStateType::Records:
 		{
-			data = new GameStateRecordsData();
-			((GameStateRecordsData*)data)->Init();
+			data = std::make_shared<GameStateRecordsData>();
 			break;
 		}
 		default:
 			assert(false); // We want to know if we forgot to implement new game state
 			break;
-		}		
+		}
+		if (data) {
+			data->Init();
+		}
 	}
 
 	GameState::~GameState()
 	{
 		if (data) 
 		{
-			switch (type)
-			{
-				case GameStateType::MainMenu:
-				{
-					delete (GameStateMainMenuData*)data;
-					break;
-				}
-				case GameStateType::Playing:
-				{
-					delete (GameStatePlayingData*)data;
-					break;
-				}
-				case GameStateType::GameOver:
-				{
-					delete (GameStateGameOverData*)data;
-					break;
-				}
-				case GameStateType::GameWin:
-				{
-					delete (GameStateGameWinData*)data;
-					break;
-				}
-				case GameStateType::ExitDialog:
-				{
-					delete (GameStatePauseMenuData*)data;
-					break;
-				}
-				case GameStateType::Records:
-				{
-					delete (GameStateRecordsData*)data;
-					break;
-				}
-			default:
-				break;
-			}		
 			data = nullptr;
 		}
 	}
 
 	void GameState::Update(float timeDelta)
 	{
-		static_cast<GameStateData*>(data)->Update(timeDelta);
+		data->Update(timeDelta);
 	}
 
 	void GameState::Draw(sf::RenderWindow& window)
 	{
-		static_cast<GameStateData*>(data)->Draw(window);
+		data->Draw(window);
 	}
 
 	void GameState::HandleWindowEvent(sf::Event& event)
 	{
-		static_cast<GameStateData*>(data)->HandleWindowEvent(event);
+		data->HandleWindowEvent(event);
 	}
-	void* GameState::CopyDate(const GameState& state) const
-	{
-		void* data = nullptr;
-		switch (state.type)
-		{
-		case GameStateType::MainMenu:
-		{
-			data = new GameStateMainMenuData();
-			*((GameStateMainMenuData*)data)= *((GameStateMainMenuData*)state.data);
-			break;
-		}
-		case GameStateType::Playing:
-		{
-			data = new GameStatePlayingData();
-			*((GameStatePlayingData*)data) = *((GameStatePlayingData*)state.data);
-			break;
-		}
-		case GameStateType::GameOver:
-		{
-			data = new GameStateGameOverData();
-			*((GameStateGameOverData*)data)= *((GameStateGameOverData*)state.data);
-			break;
-		}
-		case GameStateType::GameWin:
-		{
-			data = new GameStateGameWinData();
-			*((GameStateGameWinData*)data)= *((GameStateGameWinData*)state.data);
-			break;
-		}
-		case GameStateType::ExitDialog:
-		{
-			data = new GameStatePauseMenuData();
-			*((GameStatePauseMenuData*)data)= *((GameStatePauseMenuData*)state.data);
-			break;
-		}
-		case GameStateType::Records:
-		{
-			data = new GameStateRecordsData();
-			*((GameStateRecordsData*)data)= *((GameStateRecordsData*)state.data);
-			break;
-		}
-		default:
-			assert(false); // We want to know if we forgot to implement new game state
-			break;
-		}
-		return data;
-	}
-
 	
 }

@@ -49,10 +49,8 @@ namespace ArkanoidGame
 		void HandleWindowEvent(sf::Event& event);
 
 	private:
-		void* CopyDate(const GameState& state)const;
-	private:
 		GameStateType type = GameStateType::None;
-		void* data = nullptr;
+		std::shared_ptr<GameStateData> data = nullptr;
 		bool isExclusivelyVisible = false;
 	};
 }

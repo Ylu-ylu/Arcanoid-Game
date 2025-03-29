@@ -58,6 +58,12 @@
     <ClCompile Include="GameObject.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
+    <ClCompile Include="Block.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="ThreeHitBlock.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -104,6 +110,21 @@
       <Filter>Sources</Filter>
     </ClInclude>
     <ClInclude Include="GameObject.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="Block.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="Colladiable.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="IDelayedAction.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="randomizer.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="ThreeHitBlock.h">
       <Filter>Sources</Filter>
     </ClInclude>
   </ItemGroup>

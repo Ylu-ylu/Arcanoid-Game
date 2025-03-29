@@ -4,6 +4,7 @@
 #include <assert.h>
 #include <algorithm>
 #include <random>
+#include "randomizer.h"
 
 namespace
 {
@@ -14,22 +15,18 @@ namespace
 namespace ArkanoidGame
 {
 	Ball::Ball(const sf::Vector2f& position)
-		: GameObject(TEXTURES_PATH + TEXTURE_ID + ".png", position,BALL_SIZE, BALL_SIZE)
+		: GameObject(GameObjectType::Ball, TEXTURES_PATH + TEXTURE_ID + ".png", position, BALL_SIZE, BALL_SIZE)
 	{
+		GetSize();
 		const float angle = 90;
 		const auto pi = std::acos(-1.f);
 		direction.x = std::cos(pi / 180.f * angle);
 		direction.y = std::sin(pi / 180.f * angle);
-	}
 
-	void Ball::Init()
-	{
-		assert(texture.loadFromFile(TEXTURES_PATH + TEXTURE_ID + ".png"));
-		InitSprite(sprite, BALL_SIZE, BALL_SIZE, texture);
-		SetSpriteRandomPosition(sprite, { 0, 0, SCREEN_WIDTH, SCREEN_HEGHT-SCREEN_HEGHT/2 }, {});
-	}
+		
+	}	
 
-	void Ball::Update(float timeDelta)
+	void Ball::Update(float timeDelta) 
 	{
 		const auto pos = sprite.getPosition() + BALL_SPEED * timeDelta * direction;
 		sprite.setPosition(pos);
@@ -44,16 +41,8 @@ namespace ArkanoidGame
 			direction.y *= -1;
 		}
 		
-	}
-	void Ball::Draw(sf::RenderWindow& window) 
-	{
-		DrawSprite(sprite, window);
-	}
-
-	bool Ball::CheckCollisionWhithPlatform(const Platform& platform)
-	{
-		return platform.GetRect().intersects(platform.GetRect());
-	}
+	}	
+		
 	void Ball::InvertDirectionX()
 	{
 		direction.x *= -1;
@@ -67,6 +56,17 @@ namespace ArkanoidGame
 	float Ball::GetSize() const
 	{
 		return BALL_SIZE;
+	}
+
+	void Ball::OnHit()
+	{
+		lastAngle += random<float>(-5, 5);
+		ChangeAngle(lastAngle);
+	}
+
+	bool Ball::GetCollision(std::shared_ptr<Colladiable> collidable) const
+	{
+		return GetSpriteRect().intersects(collidable->GetRect());
 	}
 
 	void Ball::ChangeAngle(float angle)

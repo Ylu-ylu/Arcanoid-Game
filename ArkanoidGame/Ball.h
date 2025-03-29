@@ -2,31 +2,36 @@
 #include "SFML/Graphics.hpp"
 #include "Platform.h"
 #include "GameObject.h"
+#include "Colladiable.h"
 
 
 namespace ArkanoidGame
 {
-	class Ball:public GameObject
+	class Ball:public GameObject, public Colladiable
 	{
 	public:
 		Ball(const sf::Vector2f& position);
 		~Ball() = default;
-
-		void Init();
 		void Update(float timeDelta);
-		void Draw(sf::RenderWindow& window);
-		bool CheckCollisionWhithPlatform(const Platform& platform);
-		const sf::Vector2f& GetPosition() const { return sprite.getPosition(); }
+
 		void InvertDirectionX();
-		void InvertDirectionY();
+		void InvertDirectionY();		
+		
+		//bool CheckCollisionWhithPlatform(const Platform& platform);
+		virtual sf::FloatRect GetRect() const { return GetSpriteRect(); }
+
+		virtual bool GetCollision(std::shared_ptr<Colladiable> collidable) const override;
+		
 		void ChangeAngle(float x);
+
 		void restart() override;		
 		float GetSize() const;
-	private:
+	
+	protected:
+		virtual  void OnHit() override;
+	private:		
 				
-		sf::Vector2f direction;
-		sf::Sprite sprite;
-		sf::Texture texture;
+		sf::Vector2f direction;		
 		float lastAngle = 90.f;
 	};
 }
