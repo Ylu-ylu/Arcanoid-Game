@@ -6,7 +6,7 @@
 namespace
 {
 	// id textures
-	const std::string TEXTURE_ID = "block";
+	const std::string TEXTURE_ID = "block3";
 }
 
 namespace ArkanoidGame
@@ -74,9 +74,7 @@ namespace ArkanoidGame
 	bool SmoothDestroyableBlock::IsBroken()
 	{
 		return Super::IsBroken() && !isTimerStarted_;
-	}
-
-	
+	}	
 
 	void SmoothDestroyableBlock::EachTickAction(float deltaTime)
 	{

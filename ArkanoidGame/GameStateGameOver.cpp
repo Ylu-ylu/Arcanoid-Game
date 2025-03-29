@@ -59,7 +59,6 @@ namespace ArkanoidGame
 				text.setFillColor(sf::Color::White);
 			}
 		}
-
 		// If player is not in table, replace last element with him
 		if (!isPlayerInTable)
 		{
@@ -69,8 +68,7 @@ namespace ArkanoidGame
 			sstream << MAX_RECORDS_TABLE_SIZE << ". " << PLAYER_NAME << ": " << playerScore;
 			text.setString(sstream.str());
 			text.setFillColor(sf::Color::Green);
-		}
-		
+		}		
 		hintText.setFont(font);
 		hintText.setCharacterSize(24);
 		hintText.setFillColor(sf::Color::White);

@@ -17,7 +17,6 @@ namespace ArkanoidGame
 		void InvertDirectionX();
 		void InvertDirectionY();		
 		
-		//bool CheckCollisionWhithPlatform(const Platform& platform);
 		virtual sf::FloatRect GetRect() const { return GetSpriteRect(); }
 
 		virtual bool GetCollision(std::shared_ptr<Colladiable> collidable) const override;

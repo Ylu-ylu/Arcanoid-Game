@@ -14,6 +14,8 @@
 #include "Block.h"
 #include "ThreeHitBlock.h"
 #include <iostream>
+#include "randomizer.h"
+#include <random>
 
 
 namespace ArkanoidGame
@@ -152,14 +154,6 @@ namespace ArkanoidGame
 
 		}
 
-		
-
-		
-
-
-		
-
-
 		///////////////////////////
 		if (collisionCooldown > 0)
 		{
@@ -187,21 +181,6 @@ namespace ArkanoidGame
 			const auto platformRect = platformObj->GetSpriteRect();
 		}
 	
-		/*if (ballObj->GetPosition().y > gameObjects.front()->GetSpriteRect().top)
-		{
-			gameOverSound.play();
-			Application::Instance().GetGame().SetFinalScore(score);
-			Application::Instance().GetGame().LooseGame();
-		}
-		if (ballObj->GetPosition().y + ballObj->GetSize() / 2 > SCREEN_HEGHT)
-		{
-			// Ball went below the bottom edge - game over
-			gameOverSound.play();
-
-			Application::Instance().GetGame().SetFinalScore(score);
-			Application::Instance().GetGame().LooseGame();
-			return; // Stop further processing
-		}*/
 		// Update score
 		scoreText.setString("Score: " + std::to_string(score));
 	}
@@ -228,27 +207,44 @@ namespace ArkanoidGame
 	}
 
 	void GameStatePlayingData::CreateBlocks()
-	{
-		
+	{		
+		// Random number generation setup
+		std::random_device rd;
+		std::mt19937 gen(rd());
+		std::discrete_distribution<> dis({ 75, 10, 15 }); // Random number between 0 and 2
+
 		for (int row = 0; row < BLOCKS_COUNT_ROWS; ++row)
 		{
-			for (int col = 0; col <BLOCKS_COUNT_IN_ROW; ++col)
+			for (int col = 0; col < BLOCKS_COUNT_IN_ROW; ++col)
 			{
-				auto block = std::make_shared<SmoothDestroyableBlock>
-					(sf::Vector2f({ BLOCK_SHIFT + BLOCK_WIDTH / 2.f + col * (BLOCK_WIDTH + BLOCK_SHIFT), 
+				int blockType = dis(gen); // Randomly select block type
+
+				std::shared_ptr<Block> block;
+				switch (blockType)
+				{
+				case 0:
+					//75%
+					block = std::make_shared<SmoothDestroyableBlock>
+						(
+						sf::Vector2f({ BLOCK_SHIFT + BLOCK_WIDTH / 2.f + col * (BLOCK_WIDTH + BLOCK_SHIFT),
 						100.f + row * (BLOCK_HEIGHT + BLOCK_SHIFT) }));
-				//gameObjects.emplace_back(block);
+					break;
+				case 1:
+					//10%
+					block = std::make_shared<UnbreackableBlock>
+						(
+						sf::Vector2f({ BLOCK_SHIFT + BLOCK_WIDTH / 2.f + col * (BLOCK_WIDTH + BLOCK_SHIFT),
+						100.f + row * (BLOCK_HEIGHT + BLOCK_SHIFT) }));
+					break;
+				case 2:
+					//15%
+					block = std::make_shared<ThreeHitBlock>						
+						(
+						sf::Vector2f({ BLOCK_SHIFT + BLOCK_WIDTH / 2.f + col * (BLOCK_WIDTH + BLOCK_SHIFT),
+						100.f + row * (BLOCK_HEIGHT + BLOCK_SHIFT) }));
+					break;
+				}
 				blocks.emplace_back(block);
-			}
-			for (int col = 0; col < 3; ++col)
-			{
-				auto unbreackableblock = std::make_shared<UnbreackableBlock>(sf::Vector2f({ BLOCK_SHIFT + BLOCK_WIDTH / 2.f + col * (BLOCK_WIDTH + BLOCK_SHIFT), 100.f + row * (BLOCK_HEIGHT + BLOCK_SHIFT)}));
-				blocks.emplace_back(unbreackableblock);
-			}
-			for (int col = 4; col < 7; ++col)
-			{
-				auto threehitblock = std::make_shared<ThreeHitBlock>(sf::Vector2f({ BLOCK_SHIFT + BLOCK_WIDTH / 2.f + col * (BLOCK_WIDTH + BLOCK_SHIFT), 100.f + row * (BLOCK_HEIGHT + BLOCK_SHIFT)}));
-				blocks.emplace_back(threehitblock);
 			}
 		}
 	}

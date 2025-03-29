@@ -21,9 +21,7 @@ namespace ArkanoidGame
 		const float angle = 90;
 		const auto pi = std::acos(-1.f);
 		direction.x = std::cos(pi / 180.f * angle);
-		direction.y = std::sin(pi / 180.f * angle);
-
-		
+		direction.y = std::sin(pi / 180.f * angle);		
 	}	
 
 	void Ball::Update(float timeDelta) 

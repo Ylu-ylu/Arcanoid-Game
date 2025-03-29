@@ -34,11 +34,9 @@ namespace ArkanoidGame
 	{
 		DrawSprite(sprite, window);
 	}
-
 	
 	void GameObject::restart()
 	{
 		sprite.setPosition(startPosition);
 	}
-
 }

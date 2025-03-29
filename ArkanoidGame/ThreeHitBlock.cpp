@@ -3,7 +3,6 @@
 
 namespace ArkanoidGame
 {
-
 	ThreeHitBlock::ThreeHitBlock(const sf::Vector2f& position)
 		:SmoothDestroyableBlock(position, sf::Color::Cyan)
 	{
@@ -26,6 +25,5 @@ namespace ArkanoidGame
 			color = sf::Color::Green;
 		}
 	}
-
 }
 	

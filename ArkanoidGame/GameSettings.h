@@ -2,8 +2,7 @@
 #include <string>
 
 namespace ArkanoidGame
-{
-	
+{	
 		// Resources path
 		const std::string RESOURCES_PATH = "Resources/";
 		const std::string TEXTURES_PATH = RESOURCES_PATH + "Textures/";
@@ -29,10 +28,9 @@ namespace ArkanoidGame
 	
 		const unsigned int BLOCKS_COUNT_ROWS = 4;
 		const unsigned int BLOCKS_COUNT_IN_ROW = 15;
-		const unsigned int BLOCK_SHIFT = 2;
+		const unsigned int BLOCK_SHIFT = 5;
 		const unsigned int BLOCK_WIDTH = (SCREEN_WIDTH - (BLOCKS_COUNT_IN_ROW + 1) * BLOCK_SHIFT) / (BLOCKS_COUNT_IN_ROW);
 		const unsigned int BLOCK_HEIGHT = 20;
-		const unsigned int BREAK_DELAY= 1.0f;
-	
+		const unsigned int BREAK_DELAY= 1.0f;	
 }
 
