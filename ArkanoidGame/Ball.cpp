@@ -34,15 +34,16 @@ namespace ArkanoidGame
 		const auto pos = sprite.getPosition() + BALL_SPEED * timeDelta * direction;
 		sprite.setPosition(pos);
 
-		if (pos.x - BALL_SIZE / 2.f <= 0 || pos.x + BALL_SIZE / 2.f >= SCREEN_WIDTH) 
+		if (pos.x - BALL_SIZE / 2.f <= 0 || pos.x + BALL_SIZE / 2.f >= SCREEN_WIDTH)
 		{
-			direction.x *= -1;
+			InvertDirectionX();
 		}
 
 		if (pos.y - BALL_SIZE / 2.f <= 0 || pos.y + BALL_SIZE / 2.f >= SCREEN_HEGHT)
 		{
-			direction.y *= -1;
+			InvertDirectionY();
 		}
+
 		
 	}
 	void Ball::Draw(sf::RenderWindow& window) 
@@ -52,7 +53,31 @@ namespace ArkanoidGame
 
 	bool Ball::CheckCollisionWhithPlatform(const Platform& platform)
 	{
-		return platform.GetRect().intersects(platform.GetRect());
+		static std::random_device rd;
+		static std::mt19937 gen(rd());
+		static std::uniform_real_distribution<float> dis(-10.0f, 10.0f);
+
+		if (platform.GetRect().intersects(sprite.getGlobalBounds()))
+		{
+			// Check if the ball is hitting the platform from the top or bottom
+			if (sprite.getPosition().y + BALL_SIZE / 2.f >= platform.GetRect().top &&
+				sprite.getPosition().y - BALL_SIZE / 2.f <= platform.GetRect().top + platform.GetRect().height)
+			{
+				InvertDirectionY();
+				// Add a small angle change to avoid getting stuck
+				ChangeAngle(lastAngle + dis(gen));
+			}
+			// Check if the ball is hitting the platform from the sides
+			else if (sprite.getPosition().x + BALL_SIZE / 2.f >= platform.GetRect().left &&
+				sprite.getPosition().x - BALL_SIZE / 2.f <= platform.GetRect().left + platform.GetRect().width)
+			{
+				InvertDirectionX();
+				// Add a small angle change to avoid getting stuck
+				ChangeAngle(lastAngle + dis(gen));
+			}
+			return true;
+		}
+		return false;
 	}
 	void Ball::InvertDirectionX()
 	{

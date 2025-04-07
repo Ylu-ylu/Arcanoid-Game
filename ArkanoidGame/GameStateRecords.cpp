@@ -17,15 +17,23 @@ namespace ArkanoidGame
 		titleText.setFillColor(sf::Color::Red);
 		titleText.setCharacterSize(48);
 
-		tableTexts.reserve(MAX_RECORDS_TABLE_SIZE);		
-		
+		tableTexts.reserve(MAX_RECORDS_TABLE_SIZE);
+
 		const Game& game = Application::Instance().GetGame();
-		std::map<int, std::string> sortedRecordsTable;
+		std::multimap<int, std::string> sortedRecordsTable;
+
+		// Get the player's score
+		int playerScore = game.GetFinalScore();
+		std::string playerName = PLAYER_NAME;
+
 		for (const auto& item : game.GetRecordsTable())
 		{
-			sortedRecordsTable[item.second] = item.first;
+			sortedRecordsTable.insert(std::make_pair(item.second, item.first));
 		}
-		
+
+		// Insert the player's score into the sorted map
+		sortedRecordsTable.insert(std::make_pair(playerScore, playerName));
+
 		auto it = sortedRecordsTable.rbegin();
 		for (int i = 0; i < MAX_RECORDS_TABLE_SIZE && it != sortedRecordsTable.rend(); ++i, ++it) // Note, we can do several actions in for action block
 		{
@@ -37,23 +45,26 @@ namespace ArkanoidGame
 			sstream << i + 1 << ". " << it->second << ": " << it->first;
 			text.setString(sstream.str());
 			text.setFont(font);
-			text.setFillColor(sf::Color::White);
+			text.setFillColor(it->second == playerName ? sf::Color::Green : sf::Color::White);
 			text.setCharacterSize(24);
 
-			int playerScore = Application::Instance().GetGame().GetFinalScore();
-			sstream << MAX_RECORDS_TABLE_SIZE << ". " << PLAYER_NAME << ": " << playerScore;
 		}
+
 		bool isPlayerInTable = false;
+
 		if (!isPlayerInTable)
 		{
+			tableTexts.emplace_back();
 			sf::Text& text = tableTexts.back();
 			std::stringstream sstream;
-			int playerScore = Application::Instance().GetGame().GetFinalScore();
+
 			sstream << MAX_RECORDS_TABLE_SIZE << ". " << PLAYER_NAME << ": " << playerScore;
 			text.setString(sstream.str());
 			text.setFillColor(sf::Color::Green);
+			text.setCharacterSize(24);
+			text.setFont(font);
 		}
-	
+
 		hintText.setString("Press ESC to return back to main menu");
 		hintText.setFont(font);
 		hintText.setFillColor(sf::Color::White);

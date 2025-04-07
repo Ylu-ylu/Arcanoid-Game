@@ -28,15 +28,22 @@ namespace ArkanoidGame
 		recordsTableTexts.reserve(MAX_RECORDS_TABLE_SIZE);
 
 		int playerScore = Application::Instance().GetGame().GetFinalScore();
+		const Game& game = Application::Instance().GetGame();
 
 		std::multimap<int, std::string> sortedRecordsTable;
-		Game& game = Application::Instance().GetGame();
+
+		// Get the player's score
+
+		std::string playerName = PLAYER_NAME;
+
 		for (const auto& item : game.GetRecordsTable())
 		{
 			sortedRecordsTable.insert(std::make_pair(item.second, item.first));
 		}
 
-		bool isPlayerInTable = false;
+		// Insert the player's score into the sorted map
+		sortedRecordsTable.insert(std::make_pair(playerScore, playerName));
+
 		auto it = sortedRecordsTable.rbegin();
 		for (int i = 0; i < MAX_RECORDS_TABLE_SIZE && it != sortedRecordsTable.rend(); ++i, ++it) // Note, we can do several actions in for action block
 		{
@@ -48,29 +55,22 @@ namespace ArkanoidGame
 			sstream << i + 1 << ". " << it->second << ": " << it->first;
 			text.setString(sstream.str());
 			text.setFont(font);
+			text.setFillColor(it->second == playerName ? sf::Color::Green : sf::Color::White);
 			text.setCharacterSize(24);
-			if (it->second == PLAYER_NAME)
-			{
-				text.setFillColor(sf::Color::Green);
-				isPlayerInTable = true;
-			}
-			else
-			{
-				text.setFillColor(sf::Color::White);
-			}
 		}
 
-		// If player is not in table, replace last element with him
+		bool isPlayerInTable = false;
 		if (!isPlayerInTable)
 		{
+			recordsTableTexts.emplace_back();
 			sf::Text& text = recordsTableTexts.back();
 			std::stringstream sstream;
-			//int playerScores = game.GetRecordByPlayerId(PLAYER_NAME);
+			int playerScore = Application::Instance().GetGame().GetFinalScore();
 			sstream << MAX_RECORDS_TABLE_SIZE << ". " << PLAYER_NAME << ": " << playerScore;
 			text.setString(sstream.str());
 			text.setFillColor(sf::Color::Green);
 		}
-		
+
 		hintText.setFont(font);
 		hintText.setCharacterSize(24);
 		hintText.setFillColor(sf::Color::White);
