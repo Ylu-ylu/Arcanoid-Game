@@ -57,12 +57,10 @@ namespace ArkanoidGame
 			tableTexts.emplace_back();
 			sf::Text& text = tableTexts.back();
 			std::stringstream sstream;
-
+			int playerScore = Application::Instance().GetGame().GetFinalScore();
 			sstream << MAX_RECORDS_TABLE_SIZE << ". " << PLAYER_NAME << ": " << playerScore;
 			text.setString(sstream.str());
 			text.setFillColor(sf::Color::Green);
-			text.setCharacterSize(24);
-			text.setFont(font);
 		}
 
 		hintText.setString("Press ESC to return back to main menu");
