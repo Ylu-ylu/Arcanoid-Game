@@ -16,7 +16,7 @@ namespace ArkanoidGame
 {
 	Ball::Ball(const sf::Vector2f& position)
 		: GameObject(GameObjectType::Ball, TEXTURES_PATH + TEXTURE_ID + ".png", position, BALL_SIZE, BALL_SIZE)
-	{
+	{	
 		GetSize();
 		const float angle = 90;
 		const auto pi = std::acos(-1.f);
@@ -27,18 +27,20 @@ namespace ArkanoidGame
 	void Ball::Update(float timeDelta) 
 	{
 		const auto pos = sprite.getPosition() + BALL_SPEED * timeDelta * direction;
-		sprite.setPosition(pos);
+		sprite.setPosition(pos);	
+
+		// Add to Ball class	
 
 		if (pos.x - BALL_SIZE / 2.f <= 0 || pos.x + BALL_SIZE / 2.f >= SCREEN_WIDTH) 
 		{
-			direction.x *= -1;
+			InvertDirectionX();
 		}
 
 		if (pos.y - BALL_SIZE / 2.f <= 0 || pos.y + BALL_SIZE / 2.f >= SCREEN_HEGHT)
 		{
-			direction.y *= -1;
+			InvertDirectionY();
 		}
-		
+		BallInverse = false;		
 	}	
 		
 	void Ball::InvertDirectionX()
@@ -56,16 +58,51 @@ namespace ArkanoidGame
 		return BALL_SIZE;
 	}
 
-	void Ball::OnHit()
+	void Ball::OnHit(ColladiableType type, std::shared_ptr<Colladiable> collidableWhith)
 	{
-		lastAngle += random<float>(-5, 5);
-		ChangeAngle(lastAngle);
+		if (type == ColladiableType::Hit|| type == ColladiableType::HitInverse)
+		{
+			lastAngle += random<float>(-5, 5);
+			ChangeAngle(lastAngle);
+		}
+		if(type == ColladiableType::HitInverse&& !BallInverse)
+		{
+			BallInverse = true;
+
+			bool needInverseDirX = false;
+			bool needInverseDirY = false;
+
+			const auto ballPos = GetPosition();
+			const auto blockRect = collidableWhith->GetRect();
+
+			GetBallInverse(ballPos, blockRect, needInverseDirX, needInverseDirY);
+
+			if (needInverseDirX)
+			{
+				InvertDirectionX();
+			}
+			if (needInverseDirY)
+			{
+				InvertDirectionY();
+			}
+		}		
 	}
 
-	bool Ball::GetCollision(std::shared_ptr<Colladiable> collidable) const
+	void Ball::GetBallInverse(const sf::Vector2f& ballPos, const sf::FloatRect& blockRect, bool& needInverseDirX, bool& needInverseDirY)
 	{
-		return GetSpriteRect().intersects(collidable->GetRect());
-	}
+		if (ballPos.y > blockRect.top + blockRect.height)
+		{
+			needInverseDirY = true;
+		}
+		if (ballPos.x < blockRect.left)
+		{
+			needInverseDirX = true;
+		}
+		if (ballPos.x > blockRect.left + blockRect.width)
+		{
+			needInverseDirX = true;
+		}
+	}		
 
 	void Ball::ChangeAngle(float angle)
 	{
@@ -81,6 +118,6 @@ namespace ArkanoidGame
 		const float angle = 90;
 		const auto pi = std::acos(-1.f);
 		direction.x = std::cos(pi / 180.f * angle);
-		direction.y = std::sin(pi / 180.f * angle);
-	}
+		direction.y = std::sin(pi / 180.f * angle);			
+	}	
 }

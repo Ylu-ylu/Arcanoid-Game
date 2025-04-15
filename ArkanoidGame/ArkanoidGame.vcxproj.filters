@@ -64,6 +64,9 @@
     <ClCompile Include="ThreeHitBlock.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
+    <ClCompile Include="GlassBlock.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -125,6 +128,9 @@
       <Filter>Sources</Filter>
     </ClInclude>
     <ClInclude Include="ThreeHitBlock.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="GlassBlock.h">
       <Filter>Sources</Filter>
     </ClInclude>
   </ItemGroup>

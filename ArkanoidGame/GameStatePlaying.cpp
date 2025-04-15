@@ -44,9 +44,9 @@ namespace ArkanoidGame
 
 		// Create platform and ball objects and add them to gameObjects vector
 		auto platform = std::make_shared<Platform>(sf::Vector2f(SCREEN_WIDTH / 2.f, SCREEN_HEGHT - PLATFORM_HEIGHT / 2.f));
-		auto ball = std::make_shared<Ball>(sf::Vector2f(SCREEN_WIDTH / 2.f, SCREEN_HEGHT - PLATFORM_HEIGHT - BALL_SIZE / 2.f));
+		auto ball = std::make_shared<Ball>(sf::Vector2f(SCREEN_WIDTH / 2.f, SCREEN_HEGHT - PLATFORM_HEIGHT - (BALL_SIZE) / 2.f));
 		
-		score = 0;
+		score = -1;
 
 		gameObjects.emplace_back(platform);
 		gameObjects.emplace_back(ball);
@@ -76,63 +76,41 @@ namespace ArkanoidGame
 		std::for_each(gameObjects.begin(), gameObjects.end(), updateFunctor);
 		std::for_each(blocks.begin(), blocks.end(), updateFunctor);
 
-		// Check if gameObjects has at least 2 elements
-		if (gameObjects.size() < 2) 
-		{
-			std::cerr << "Error: Not enough game objects" << std::endl;
-			return;
-		}
-
 		std::shared_ptr<Platform> platformObj = std::dynamic_pointer_cast<Platform>(gameObjects[0]);
 		std::shared_ptr<Ball> ballObj = std::dynamic_pointer_cast<Ball>(gameObjects[1]);
+			
 
-		if (!platformObj || !ballObj) {
-			// Handle error: one or both objects are not valid
-			if (!platformObj) {
-				std::cerr << "Error: platformObj is null" << std::endl;
+		auto isCollision = platformObj->CheckCollision(std::static_pointer_cast<Colladiable>(ballObj));
+	     
+		auto isCollisionWithSides = platformObj->CheckCollisionWithWindowSides();
+		
+		
+		if (collisionCooldown > 0.0f) {
+			collisionCooldown -= timeDelta;
+			if (collisionCooldown <= 0.0f) {
+				collisionProcessed = false;  // Reset only when cooldown expires
+				collisionCooldown = 0.0f;    // Prevent negative values
 			}
-			if (!ballObj) {
-				std::cerr << "Error: ballObj is null" << std::endl;
-			}
-			return; // Exit the function early to avoid further issues
+		}
+		else {
+			collisionProcessed = false;      // Ensure reset when no cooldown
 		}
 
-
-
-		auto isCollision = platformObj->CheckCollision(std::shared_ptr<Colladiable>(ballObj));
-		auto isCollisionWithSides = platformObj->CheckCollisionWithWindowSides();
-		bool needInverseDirX = false;
-		bool needInverseDirY = false;
-
-		
 		//Check collision with blocks
 		bool hasBrokeOneBlock = false;
 		//remove-erase idiom
 		blocks.erase(
 			std::remove_if(blocks.begin(), blocks.end(),
-				[ballObj, &hasBrokeOneBlock, &needInverseDirX, &needInverseDirY, this](auto block) 
+				[ballObj, &hasBrokeOneBlock,this](auto block) 
 				{
-					if ((!hasBrokeOneBlock) && block->CheckCollision(ballObj))
-					{
-						hasBrokeOneBlock = true;
-						const auto ballPos = ballObj->GetPosition();
-						const auto blockRect = block->GetRect();
-
-						GetBallInverse(ballPos, blockRect, needInverseDirX, needInverseDirY);
-					}
+					hasBrokeOneBlock = true;
+					block->CheckCollision(ballObj);
 					return block->IsBroken();
 				}),
 			blocks.end()
 		);
 		//Invert direction
-		if (needInverseDirX)
-		{
-			ballObj->InvertDirectionX();
-		}
-		if (needInverseDirY)
-		{
-			ballObj->InvertDirectionY();
-		}
+		
 
 		Game& game = Application::Instance().GetGame();
 		//Check game win
@@ -151,29 +129,23 @@ namespace ArkanoidGame
 				gameOverSound.play();
 				game.PushState(GameStateType::GameOver, false);
 			}
-
 		}
 
 		///////////////////////////
-		if (collisionCooldown > 0)
-		{
-			collisionCooldown -= timeDelta;
-			collisionProcessed = true;
-		}
-		else
-		{
-			collisionProcessed = false;
-		}
-
+		
 		if (isCollision && !collisionProcessed)
-		{
+		{						
 			eatAppleSound.play();
 			score += 1;
+			
 			Application::Instance().GetGame().SetFinalScore(score);
+			collisionProcessed = true; // Set the flag to prevent multiple collision counts
 			collisionCooldown = 0.2f;  // 200ms cooldown
-			const auto ballPos = ballObj->GetPosition();
+
+			const auto ballPos = ballObj->GetPosition();	
+
 			const auto platformRect = platformObj->GetSpriteRect();
-			GetBallInverse(ballPos, platformRect, needInverseDirX, needInverseDirY);
+			
 		}
 		if (isCollisionWithSides)
 		{
@@ -211,7 +183,9 @@ namespace ArkanoidGame
 		// Random number generation setup
 		std::random_device rd;
 		std::mt19937 gen(rd());
-		std::discrete_distribution<> dis({ 75, 10, 15 }); // Random number between 0 and 2
+
+		std::discrete_distribution<> dis({ 75, 10, 15, 15 }); 
+
 
 		for (int row = 0; row < BLOCKS_COUNT_ROWS; ++row)
 		{
@@ -243,25 +217,18 @@ namespace ArkanoidGame
 						sf::Vector2f({ BLOCK_SHIFT + BLOCK_WIDTH / 2.f + col * (BLOCK_WIDTH + BLOCK_SHIFT),
 						100.f + row * (BLOCK_HEIGHT + BLOCK_SHIFT) }));
 					break;
+				case 3:
+					//15%
+					block = std::make_shared<GlassBlock>
+						(
+						sf::Vector2f({ BLOCK_SHIFT + BLOCK_WIDTH / 2.f + col * (BLOCK_WIDTH + BLOCK_SHIFT),
+						100.f + row * (BLOCK_HEIGHT + BLOCK_SHIFT) }));
+					break;
+
 				}
+				
 				blocks.emplace_back(block);
 			}
-		}
-	}
-
-	void GameStatePlayingData::GetBallInverse(const sf::Vector2f& ballPos, const sf::FloatRect& blockRect, bool& needInverseDirX, bool& needInverseDirY)
-	{
-		if (ballPos.y > blockRect.top + blockRect.height)
-		{
-			needInverseDirY = true;
-		}
-		if (ballPos.x < blockRect.left)
-		{
-			needInverseDirX = true;
-		}
-		if (ballPos.x > blockRect.left + blockRect.width)
-		{
-			needInverseDirX = true;
 		}
 	}
 

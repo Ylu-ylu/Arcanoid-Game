@@ -1,4 +1,4 @@
- #pragma once
+#pragma once
 #include <SFML/Graphics.hpp>
 #include "Block.h"
 #include "Colladiable.h"
@@ -6,16 +6,18 @@
 
 namespace ArkanoidGame
 {
-	class ThreeHitBlock : public SmoothDestroyableBlock
+	class GlassBlock :public SmoothDestroyableBlock
 	{
 		using Super = SmoothDestroyableBlock;
 	public:
-		ThreeHitBlock(const sf::Vector2f & position);
+		GlassBlock(const sf::Vector2f& position);
 
 	private:
 
 		void OnHit(ColladiableType type, std::shared_ptr<Colladiable> collidableWhith) override;
 
-		void StageChange();
+		virtual ColladiableType GetCollision(const std::shared_ptr<Colladiable> collidable) const override;
 	};
+
+	
 }

@@ -15,6 +15,8 @@ namespace ArkanoidGame
 		void Update(float timeDelta) override;
 		void Draw(sf::RenderWindow& window) override;
 
+		void SetTableRecords();
+
 	private:
 		// Resources
 		sf::Font font;

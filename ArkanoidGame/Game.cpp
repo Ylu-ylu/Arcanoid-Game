@@ -18,7 +18,7 @@ namespace ArkanoidGame
 			{"Jane", 100 / 3 },
 			{"Alice", 100/ 4 },
 			{"Bob", 100 / 5 },
-			{"Clementine", 100/ 6 },
+			{"Clementine", 1 },
 		};
 
 		stateChangeType = GameStateChangeType::None;

@@ -2,6 +2,7 @@
 #include "SFML/Graphics.hpp"
 #include "SFML/Audio.hpp"
 #include "GameStateData.h"
+#include "GlassBlock.h"
 
 
 namespace ArkanoidGame
@@ -21,11 +22,8 @@ namespace ArkanoidGame
 		void Draw(sf::RenderWindow& window) override;
 
 	private:
-		void CreateBlocks();
+		void CreateBlocks();		
 		
-		void GetBallInverse(const sf::Vector2f& ballPos, const sf::FloatRect& blockRect, bool& needInverseDirX,
-			bool& needInverseDirY);
-
 		 bool collisionProcessed = false;  // Flag to prevent multiple collision counts
          float collisionCooldown = 0.0f;   // Cooldown timer for collisions
 

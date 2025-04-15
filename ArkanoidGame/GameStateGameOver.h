@@ -5,6 +5,7 @@
 namespace ArkanoidGame
 {
 	class Game;
+	class GameStateRecordsData;
 
 	class GameStateGameOverData: public GameStateData
 	{
@@ -13,6 +14,7 @@ namespace ArkanoidGame
 		void HandleWindowEvent(const sf::Event& event) override;
 		void Update(float timeDelta) override;
 		void Draw(sf::RenderWindow& window) override;
+		friend class GameStateRecordsData;
 
 	private:
 		// Resources
@@ -24,6 +26,6 @@ namespace ArkanoidGame
 		sf::RectangleShape background;
 		sf::Text gameOverText;
 		sf::Text hintText;
-		std::vector<sf::Text> recordsTableTexts;
+		std::vector<sf::Text> recordsableTexts;
 	};	
 }

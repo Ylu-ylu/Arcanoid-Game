@@ -10,17 +10,20 @@ namespace ArkanoidGame
 	{
 	
 	protected:
-		virtual  void OnHit() override; 
+		virtual  void OnHit(ColladiableType type, std::shared_ptr<Colladiable> collidableWhith) override;
 		int hitCount = 1;
 		int hitDamage = 1;
+
 	public:
 		Block(const sf::Vector2f& position, const sf::Color& color = sf::Color::Green);
 		virtual ~Block() override= default;
-		virtual bool GetCollision(std::shared_ptr<Colladiable> collidableObject) const override;
+		sf::FloatRect GetColladiableRect() const override { return GetRect(); };
+
+		ColladiableType GetCollision(std::shared_ptr<Colladiable> collidableObject) const override;
 		virtual void Update(float timeDelta) override;
 		virtual bool IsBroken();
 
-		virtual sf::FloatRect GetRect() const { return GetSpriteRect(); }
+		virtual sf::FloatRect GetRect() const override { return GetSpriteRect(); }
 
 	};
 
@@ -28,7 +31,7 @@ namespace ArkanoidGame
 	{
 		using Super = Block;
 	protected:
-		virtual  void OnHit() override;
+		virtual  void OnHit(ColladiableType type, std::shared_ptr<Colladiable> collidableWhith) override;
 		sf::Color color;
 		
 	public:
@@ -36,9 +39,9 @@ namespace ArkanoidGame
 		~SmoothDestroyableBlock() override = default;
 		
 		//Block
-		virtual bool GetCollision(std::shared_ptr<Colladiable> collidableObject) const override;
+		virtual ColladiableType GetCollision(std::shared_ptr<Colladiable> collidableObject) const override;
 		virtual void Update(float timeDelta) override;
-		virtual bool IsBroken();
+		virtual bool IsBroken() override;
 
 		//IDelayedAction		
 		void EachTickAction(float deltaTime) override;
@@ -49,7 +52,7 @@ namespace ArkanoidGame
 	{
 	public:
 		UnbreackableBlock(const sf::Vector2f& position);	
-		void OnHit() override {};
+		void OnHit(ColladiableType type, std::shared_ptr<Colladiable> collidableWhith) override {};
 	};
 
 }

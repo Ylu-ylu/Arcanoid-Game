@@ -17,6 +17,7 @@ namespace ArkanoidGame
 	Platform::Platform(const sf::Vector2f& position)
 		: GameObject(GameObjectType::Platform, TEXTURES_PATH + TEXTURE_ID + ".png", position, PLATFORM_WIDTH, PLATFORM_HEIGHT)
 	{
+       
 	}
 	void Platform::Update(float timeDelta)
 	{
@@ -30,29 +31,42 @@ namespace ArkanoidGame
 		}
 	}
 
-	bool Platform::GetCollision(std::shared_ptr<Colladiable> collidable) const
-	{
-		auto ball = std::static_pointer_cast<Ball>(collidable);
-		if (!ball) return false;
+    ColladiableType Platform::GetCollision(std::shared_ptr<Colladiable> collidable) const
+    {
+        auto ball = std::dynamic_pointer_cast<Ball>(collidable);
+        if (!ball) 
+            return ColladiableType::None;
 
-		auto sqr = [](float x) 
-			{
-			return x * x;
-			};
-		const auto rect = sprite.getGlobalBounds();
-		const auto ballPos = ball->GetPosition();
-		if (ballPos.x < rect.left) 
-		{
-			return sqr(ballPos.x - rect.left) + sqr(ballPos.y - rect.top) < sqr(BALL_SIZE / 2.0);
-		}
+        auto sqr = [](float x) 
+        {
+            return x * x;
+        };
 
-		if (ballPos.x > rect.left + rect.width) 
-		{
-			return sqr(ballPos.x - rect.left - rect.width) + sqr(ballPos.y - rect.top) < sqr(BALL_SIZE / 2.0);
-		}
+        const auto rect = sprite.getGlobalBounds();
+        const auto ballPos = ball->GetPosition();
 
-		return std::fabs(ballPos.y - rect.top) <= BALL_SIZE / 2.0;
-	}
+       if (ballPos.x < rect.left)
+        {
+            return (sqr(ballPos.x - rect.left) + sqr(ballPos.y - rect.top) < sqr(BALL_SIZE / 2.0f)?
+				ColladiableType::Hit: ColladiableType::None);      
+                         
+        }
+
+        if (ballPos.x > rect.left + rect.width)
+        {
+           return (sqr(ballPos.x - rect.left - rect.width) + sqr(ballPos.y - rect.top) < sqr(BALL_SIZE / 2.0f)?
+			   ColladiableType::Hit: ColladiableType::None);                     
+            
+        }
+
+         return (std::fabs(ballPos.y - rect.top) <= BALL_SIZE / 2.0f)?
+			 ColladiableType::Hit: ColladiableType::None;      
+
+        const float ballRadius = BALL_SIZE / 2.0f;
+        
+        // No collision
+        return ColladiableType::None;       
+    }
 
 	bool Platform::CheckCollision(std::shared_ptr<Colladiable> collidable)
 	{
@@ -60,13 +74,15 @@ namespace ArkanoidGame
 		if (!ball)
 			return false;
 
-		if (GetCollision(ball)) 
+		if (GetCollision(ball)!=ColladiableType::None) 
 		{
 			auto rect = GetSpriteRect();
 			auto ballPosInOlatform = (ball->GetPosition().x - (rect.left + rect.width / 2)) / (rect.width / 2);
-			ball->ChangeAngle(90 - 20 * ballPosInOlatform);
-			return true;
+			ball->ChangeAngle(90 - 20 * ballPosInOlatform);	                       
+
+            return true; // Collision detected           
 		}
+        
 		return false;
 	}
 
@@ -93,5 +109,5 @@ namespace ArkanoidGame
 			return true;
 		}
 		return false;
-	}
+	}  	
 }

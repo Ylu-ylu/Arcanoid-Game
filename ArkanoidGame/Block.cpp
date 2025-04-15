@@ -6,12 +6,12 @@
 namespace
 {
 	// id textures
-	const std::string TEXTURE_ID = "block3";
+	const std::string TEXTURE_ID = "block";
 }
 
 namespace ArkanoidGame
 {
-	void Block::OnHit()
+	void Block::OnHit(ColladiableType type, std::shared_ptr<Colladiable> collidableWhith)
 	{
 		hitCount-= hitDamage;
 	}
@@ -19,28 +19,32 @@ namespace ArkanoidGame
 		GameObject(GameObjectType::Block, TEXTURES_PATH + TEXTURE_ID + ".png", position, BLOCK_WIDTH, BLOCK_HEIGHT)
 	{
 		sprite.setColor(color);
-	}
+	}	
 
-	bool Block::GetCollision(std::shared_ptr<Colladiable> collidableObject) const
-	{		
-		return GetSpriteRect().intersects(collidableObject->GetRect());
+	ColladiableType Block::GetCollision(std::shared_ptr<Colladiable> collidableObject) const
+	{
+		ColladiableType type = Colladiable::GetCollision(collidableObject);
+			if (type == ColladiableType::Hit)
+			{
+				return ColladiableType::HitInverse;
+			}
+			return type;		
 	}
 
 	void Block::Update(float timeDelta)
 	{
 		
+		
 	}
 
 	bool Block::IsBroken()
-	{
+	{ 
 		return hitCount <= 0;
 	}
-
 	
-
-	void SmoothDestroyableBlock::OnHit()
+	void SmoothDestroyableBlock::OnHit(ColladiableType type, std::shared_ptr<Colladiable> collidableWhith)
 	{
-		Super::OnHit();
+		Super::OnHit(type, collidableWhith);
 		if(hitCount <= 0)
 		{
 		StartTimer(BREAK_DELAY);
@@ -55,20 +59,19 @@ namespace ArkanoidGame
 		
 	}
 
-	bool SmoothDestroyableBlock::GetCollision(std::shared_ptr<Colladiable> collidableObject) const 
+	ColladiableType SmoothDestroyableBlock::GetCollision(std::shared_ptr<Colladiable> collidableObject) const
 	{
-		if (isTimerStarted_) 
+		if (isTimerStarted_)
 		{
-			return false;
-		}		
-		return Super::GetCollision(collidableObject);
+			return ColladiableType::None; // Return a value when the timer is started
+		}
+		return Super::GetCollision(collidableObject); // Return the result of the base class method otherwis
 	}
 
 	void SmoothDestroyableBlock::Update(float timeDelta)
 	{
 		Super::Update(timeDelta);
 		UpdateTimer(timeDelta);
-
 	}
 
 	bool SmoothDestroyableBlock::IsBroken()
@@ -88,7 +91,6 @@ namespace ArkanoidGame
 	{
 		hitDamage=0;
 	}
-
 	
 }
 

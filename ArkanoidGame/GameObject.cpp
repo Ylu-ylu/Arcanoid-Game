@@ -7,7 +7,8 @@
 namespace ArkanoidGame
 {
 	GameObject::GameObject(GameObjectType type,const std::string& texturePath, const sf::Vector2f& position, float width, float height) :
-		startPosition(position)
+		startPosition(position),
+		colladiableType(ColladiableType::Hit) // Initialize colladiableType here
 	{
 		assert(texture.loadFromFile(texturePath));
 
@@ -15,9 +16,11 @@ namespace ArkanoidGame
 			{
 			case GameObjectType::Ball:
 				InitSprite(sprite, BALL_SIZE, BALL_SIZE, texture);
+				
 				break;
 			case GameObjectType::Platform:
 				InitSprite(sprite, PLATFORM_WIDTH, PLATFORM_HEIGHT, texture);
+			
 				break;	
 			case GameObjectType::Block:
 				InitSprite(sprite, BLOCK_WIDTH, BLOCK_HEIGHT, texture);
@@ -29,7 +32,10 @@ namespace ArkanoidGame
 		
 		sprite.setPosition(position);
 	}
-
+	sf::FloatRect GameObject::GetColladiableRect() const 
+	{
+		return sprite.getGlobalBounds();
+	}
 	void GameObject::Draw(sf::RenderWindow& window)
 	{
 		DrawSprite(sprite, window);

@@ -9,9 +9,9 @@ namespace ArkanoidGame
 		hitCount = 3;
 	}
 
-	void ThreeHitBlock::OnHit()
+	void ThreeHitBlock::OnHit(ColladiableType type, std::shared_ptr<Colladiable> collidableWhith)
 	{
-		Super::OnHit();	
+		Super::OnHit(type, collidableWhith);	
 		StageChange();
 			
 	}

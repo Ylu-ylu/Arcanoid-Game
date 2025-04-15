@@ -7,6 +7,7 @@ namespace ArkanoidGame
 	void InitSprite(sf::Sprite& sprite, float desiredWidth, float desiredHeight, const sf::Texture& texture)
 	{
 		sprite.setTexture(texture);
+
 		SetSpriteRelativeOrigin(sprite, 0.5f, 0.5f);
 		SetSpriteSize(sprite, desiredWidth, desiredHeight);
 	}

@@ -14,14 +14,14 @@ namespace ArkanoidGame
 		const float TIME_PER_FRAME = 1.f / 60.f; // 60 fps
 	
 		const unsigned int BALL_SIZE = 20;
-		const unsigned int BALL_SPEED = 400;
+		const unsigned int BALL_SPEED = 500;
 
 
-		const unsigned int PLATFORM_WIDTH = 60;
+		const unsigned int PLATFORM_WIDTH = 80;
 		const unsigned int PLATFORM_HEIGHT = 20;
 		const float PLATFORM_SPEED = 390.f;
 	
-		const int MAX_RECORDS_TABLE_SIZE = 6;
+		const int MAX_RECORDS_TABLE_SIZE = 5;
 		
 		extern const char* const PLAYER_NAME;
 		const std::string GAME_NAME = "Arcanoid";

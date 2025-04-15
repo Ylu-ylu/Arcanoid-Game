@@ -1,27 +1,44 @@
 #pragma once
 #include "SFML/Graphics.hpp"
 #include <memory>
+#include <iostream>
 
 namespace ArkanoidGame
 {
-	class Colladiable
+	enum class ColladiableType
+	{
+		None,
+		Overlap,
+		Hit,
+		HitInverse,		
+	};
+	
+	class Colladiable: public std::enable_shared_from_this<Colladiable>
 	{
 	protected:
-		virtual void OnHit() = 0;
+		virtual ~Colladiable() = default;
+		virtual void OnHit(ColladiableType type, std::shared_ptr<Colladiable> collidableWhith) = 0;
+		
 	public:
-		virtual bool CheckCollision(std::shared_ptr<Colladiable> collidable) 
+		virtual bool CheckCollision(const std::shared_ptr<Colladiable> collidable) 
 		{
-			if (GetCollision(collidable)) 
+			const ColladiableType type = GetCollision(collidable);
+			
+			if (type != ColladiableType::None)
 			{
-				OnHit();
-				collidable->OnHit();
+				OnHit(type, collidable);
+				collidable->OnHit(type, std::shared_ptr<Colladiable>(this->shared_from_this()));
 				return true;
-			}
+			}			
 			return false;
 		}
-
-		virtual bool GetCollision(std::shared_ptr<Colladiable> collidable) const = 0;
-
 		virtual sf::FloatRect GetRect() const = 0;
+
+		virtual ColladiableType GetCollision(const std::shared_ptr<Colladiable> collidable) const
+		{			
+			return GetColladiableRect().intersects(collidable->GetRect()) ?
+				(ColladiableType::Hit) :(ColladiableType::None);
+		}		
+		virtual sf::FloatRect GetColladiableRect() const = 0;		
 	};
 }
