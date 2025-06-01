@@ -13,21 +13,27 @@ namespace ArkanoidGame
 		HitInverse,		
 	};
 	
-	class Colladiable: public std::enable_shared_from_this<Colladiable>
+	class Colladiable  //:public std::enable_shared_from_this<Colladiable>
 	{
+	private:
+		std::shared_ptr<Colladiable> self;
 	protected:
-		virtual ~Colladiable() = default;
-		virtual void OnHit(ColladiableType type, std::shared_ptr<Colladiable> collidableWhith) = 0;
 		
+		virtual void OnHit(ColladiableType type, std::shared_ptr<Colladiable> collidableWhith) = 0;
+	
 	public:
-		virtual bool CheckCollision(const std::shared_ptr<Colladiable> collidable) 
+		void SetSelf(std::shared_ptr<Colladiable> self_ptr) { self = self_ptr; }
+		
+		
+        virtual bool CheckCollision(const std::shared_ptr<Colladiable> collidable) 
 		{
 			const ColladiableType type = GetCollision(collidable);
 			
 			if (type != ColladiableType::None)
 			{
-				OnHit(type, collidable);
-				collidable->OnHit(type, std::shared_ptr<Colladiable>(this->shared_from_this()));
+				
+				OnHit(type, collidable);			
+				collidable->OnHit(type, self);
 				return true;
 			}			
 			return false;
@@ -37,8 +43,10 @@ namespace ArkanoidGame
 		virtual ColladiableType GetCollision(const std::shared_ptr<Colladiable> collidable) const
 		{			
 			return GetColladiableRect().intersects(collidable->GetRect()) ?
-				(ColladiableType::Hit) :(ColladiableType::None);
+				(ColladiableType::Hit) :(ColladiableType::None);			
 		}		
-		virtual sf::FloatRect GetColladiableRect() const = 0;		
+		virtual sf::FloatRect GetColladiableRect() const = 0;	
+		virtual ~Colladiable() = default;
 	};
+
 }

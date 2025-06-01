@@ -10,7 +10,7 @@ namespace ArkanoidGame
 {
 	void GameStateRecordsData::Init()
 	{
-		assert(font.loadFromFile(RESOURCES_PATH + "Fonts/Roboto-Regular.ttf"));
+		assert(font.loadFromFile(SETTINGS.RESOURCES_PATH + "Fonts/SF Distant Galaxy Italic.ttf"));
 
 		titleText.setString("RECORDS");
 		titleText.setFont(font);
@@ -46,7 +46,7 @@ namespace ArkanoidGame
 		sf::Vector2f viewSize = window.getView().getSize();
 
 		titleText.setOrigin(GetTextOrigin(titleText, { 0.5f, 0.f }));
-		titleText.setPosition(viewSize.x / 2.f, 50.f);
+		titleText.setPosition(viewSize.x / 2.f, 60.f);
 		window.draw(titleText);
 
 		// We need to create new vector here as DrawItemsList needs vector of pointers
@@ -58,7 +58,7 @@ namespace ArkanoidGame
 		}
 
 		sf::Vector2f tablePosition = { titleText.getGlobalBounds().left, viewSize.y / 2.f };
-		DrawTextList(window, textsList, 10.f, Orientation::Vertical, Alignment::Min, tablePosition, { -0.3f, 0.f });
+		DrawTextList(window, textsList, 10.f, Orientation::Vertical, Alignment::Min, tablePosition, { -0.3f, 0.5f });
 
 		hintText.setOrigin(GetTextOrigin(hintText, { 0.5f, 1.f }));
 		hintText.setPosition(viewSize.x / 2.f, viewSize.y - 50.f);
@@ -67,7 +67,7 @@ namespace ArkanoidGame
 
 	void GameStateRecordsData::SetTableRecords()
 	{
-		tableTexts.reserve(MAX_RECORDS_TABLE_SIZE);
+		tableTexts.reserve(SETTINGS.MAX_RECORDS_TABLE_SIZE);
 
 		const Game& game = Application::Instance().GetGame();
 		int playerScore = Application::Instance().GetGame().GetFinalScore();
@@ -75,7 +75,7 @@ namespace ArkanoidGame
 		std::multimap<int, std::string> sortedRecordsTable;
 
 		// Get the player's score	
-		std::string playerName = PLAYER_NAME;
+		std::string playerName = SETTINGS.PLAYER_NAME;
 
 		for (const auto& item : game.GetRecordsTable())
 		{
@@ -86,7 +86,7 @@ namespace ArkanoidGame
 		sortedRecordsTable.insert(std::make_pair(playerScore, playerName));
 
 		auto it = sortedRecordsTable.rbegin();
-		for (int i = 0; i < MAX_RECORDS_TABLE_SIZE && it != sortedRecordsTable.rend(); ++i, ++it) // Note, we can do several actions in for action block
+		for (int i = 0; i < SETTINGS.MAX_RECORDS_TABLE_SIZE && it != sortedRecordsTable.rend(); ++i, ++it) // Note, we can do several actions in for action block
 		{
 			tableTexts.emplace_back(); // Create text in place
 			sf::Text& text = tableTexts.back();
@@ -109,7 +109,7 @@ namespace ArkanoidGame
 			sf::Text& text = tableTexts.back();
 			std::stringstream sstream;
 			int playerScore = Application::Instance().GetGame().GetFinalScore();
-			sstream << MAX_RECORDS_TABLE_SIZE << ". " << PLAYER_NAME << ": " << playerScore;
+			sstream << SETTINGS.MAX_RECORDS_TABLE_SIZE << ". " << SETTINGS.PLAYER_NAME << ": " << playerScore;
 			text.setString(sstream.str());
 			text.setFillColor(sf::Color::Green);
 		}

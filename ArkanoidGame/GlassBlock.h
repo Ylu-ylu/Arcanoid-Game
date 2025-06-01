@@ -10,7 +10,7 @@ namespace ArkanoidGame
 	{
 		using Super = SmoothDestroyableBlock;
 	public:
-		GlassBlock(const sf::Vector2f& position);
+		GlassBlock(const sf::Vector2f& position, int points=0);
 
 	private:
 

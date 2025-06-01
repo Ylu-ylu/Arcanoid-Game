@@ -27,10 +27,11 @@ namespace ArkanoidGame
 		~GameState();
 
 		GameState& operator= (const GameState& state) = delete;
+		
 		GameState& operator= (GameState&& state) noexcept 
 		{
-			type = state.type;
-			data = state.data;
+			type = state.type;			
+			data = std::move(state.data);  // Use move instead of copy
 			isExclusivelyVisible = state.isExclusivelyVisible;
 			state.data=nullptr;
 			return *this;

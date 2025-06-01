@@ -18,5 +18,18 @@ namespace ArkanoidGame
 	private:
 		sf::Font font;
 		Menu menu;
+
+		//Background
+		sf::Texture backgroundMainMenuTexture;
+		sf::Sprite backgroundMainMenuSprite;
+
+		//For Sound
+		MenuItem soundSettingsItem;
+
+		MenuItem soundToggleItem;
+		MenuItem musicToggleItem;
+
+		bool soundOn = true;
+		bool musicOn = true;
 	};
 }

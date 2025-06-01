@@ -13,7 +13,7 @@ namespace ArkanoidGame
 {
 	void GameStateGameOverData::Init()
 	{
-		assert(font.loadFromFile(RESOURCES_PATH + "Fonts/Roboto-Regular.ttf"));
+		assert(font.loadFromFile(SETTINGS.RESOURCES_PATH + "Fonts/Roboto-Regular.ttf"));
 
 		timeSinceGameOver = 0.f;
 
@@ -27,7 +27,7 @@ namespace ArkanoidGame
 		gameOverText.setFillColor(sf::Color::Red);
 		gameOverText.setString("GAME OVER");
 
-		recordsableTexts.reserve(MAX_RECORDS_TABLE_SIZE);
+		recordsableTexts.reserve(SETTINGS.MAX_RECORDS_TABLE_SIZE);
 		
 
 		int playerScore = Application::Instance().GetGame().GetFinalScore();
@@ -35,9 +35,15 @@ namespace ArkanoidGame
 
 		std::multimap<int, std::string> sortedRecordsTable;
 
+		std::string playerName = SETTINGS.PLAYER_NAME;
 		// Get the player's score
-
-		std::string playerName = PLAYER_NAME;
+		if (SETTINGS.PLAYER_NAME != nullptr) 
+		{
+			std::string playerName = SETTINGS.PLAYER_NAME;
+		}
+		else {
+			std::string playerName = ""; // Default to empty string
+		}
 
 		for (const auto& item : game.GetRecordsTable())
 		{
@@ -48,7 +54,7 @@ namespace ArkanoidGame
 		sortedRecordsTable.insert(std::make_pair(playerScore, playerName));
 
 		auto it = sortedRecordsTable.rbegin();
-		for (int i = 0; i < MAX_RECORDS_TABLE_SIZE && it != sortedRecordsTable.rend(); ++i, ++it) // Note, we can do several actions in for action block
+		for (int i = 0; i < SETTINGS.MAX_RECORDS_TABLE_SIZE && it != sortedRecordsTable.rend(); ++i, ++it) // Note, we can do several actions in for action block
 		{
 			recordsableTexts.emplace_back(); // Create text in place
 			sf::Text& text = recordsableTexts.back();
@@ -69,11 +75,10 @@ namespace ArkanoidGame
 			sf::Text& text = recordsableTexts.back();
 			std::stringstream sstream;
 			int playerScore = Application::Instance().GetGame().GetFinalScore();
-			sstream << MAX_RECORDS_TABLE_SIZE << ". " << PLAYER_NAME << ": " << playerScore;
+			sstream << SETTINGS.MAX_RECORDS_TABLE_SIZE << ". " << SETTINGS.PLAYER_NAME << ": " << playerScore;
 			text.setString(sstream.str());
 			text.setFillColor(sf::Color::Green);
-		}
-		
+		}	
 
 		hintText.setFont(font);
 		hintText.setCharacterSize(24);

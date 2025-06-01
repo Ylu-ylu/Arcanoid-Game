@@ -3,8 +3,8 @@
 
 namespace ArkanoidGame
 {
-	GlassBlock::GlassBlock(const sf::Vector2f& position):
-		Super(position, sf::Color{ 100, 149, 237, 120})
+	GlassBlock::GlassBlock(const sf::Vector2f& position, int points):
+		Super(position, sf::Color{ 100, 149, 237, 150}, points)
 	{
 
 	}

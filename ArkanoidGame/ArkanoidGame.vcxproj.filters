@@ -67,6 +67,15 @@
     <ClCompile Include="GlassBlock.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
+    <ClCompile Include="BlockFactory.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Leveles.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Bonus.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -131,6 +140,18 @@
       <Filter>Sources</Filter>
     </ClInclude>
     <ClInclude Include="GlassBlock.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="BlockFactory.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="Leveles.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="IObserver.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="Bonus.h">
       <Filter>Sources</Filter>
     </ClInclude>
   </ItemGroup>

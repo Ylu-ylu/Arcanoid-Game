@@ -15,16 +15,23 @@ namespace ArkanoidGame
 			switch (type) 
 			{
 			case GameObjectType::Ball:
-				InitSprite(sprite, BALL_SIZE, BALL_SIZE, texture);
+				InitSprite(sprite, SETTINGS.BALL_SIZE, SETTINGS.BALL_SIZE, texture);
 				
 				break;
 			case GameObjectType::Platform:
-				InitSprite(sprite, PLATFORM_WIDTH, PLATFORM_HEIGHT, texture);
+				InitSprite(sprite, SETTINGS.PLATFORM_WIDTH, SETTINGS.PLATFORM_HEIGHT, texture);
 			
 				break;	
 			case GameObjectType::Block:
-				InitSprite(sprite, BLOCK_WIDTH, BLOCK_HEIGHT, texture);
+				InitSprite(sprite, SETTINGS.BLOCK_WIDTH, SETTINGS.BLOCK_HEIGHT, texture);
 				break;
+			case GameObjectType::FireBall:
+				InitSprite(sprite, SETTINGS.BONUS_SIZE, SETTINGS.BONUS_SIZE, texture);
+				break;
+
+			case GameObjectType::FragileBlocks:
+					InitSprite(sprite, SETTINGS.BONUS_SIZE, SETTINGS.BONUS_SIZE, texture);
+					break;
 			default:
 				// Default dimensions for other object types
 				InitSprite(sprite,width, height, texture);

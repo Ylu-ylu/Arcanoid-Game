@@ -144,7 +144,8 @@ namespace ArkanoidGame
 	void Game::ShowRecords()
 	{
 		PushState(GameStateType::Records, true);
-	}	
+	}
+
 
 	void Game::QuitGame() 
 	{
@@ -159,9 +160,46 @@ namespace ArkanoidGame
 	{
 		PushState(GameStateType::ExitDialog, false);
 	}
+	void Game::WinGame()
+	{
+		PushState(GameStateType::GameWin, false);
+	}
 	void Game::LooseGame()
 	{		
 		PushState(GameStateType::GameOver, false);
 	}
 	
+	void Game::UpdateGame(float timeDelta, sf::RenderWindow& window)
+	{
+		HandleWindowEvents(window);
+		if (Update(timeDelta))
+		{
+			// Draw everything here
+			// Clear the window first
+			window.clear();
+
+			Draw(window);
+
+			// End the current frame, display window contents on screen
+			window.display();
+		}
+		else
+		{
+			window.close();
+		}
+	}
+	void Game::SetSoundEnabled(bool enabled)
+	{
+		m_soundEnabled = enabled;
+	}
+	bool Game::IsSoundEnabled() const
+	{
+		return m_soundEnabled;
+	}
+	void Game::LoadNextLevel()
+	{
+		assert(stateStack.back().GetType() == GameStateType::Playing);
+		auto playingData = (stateStack.back().GetData<GameStatePlayingData>());
+		playingData->LoadNextLevel();
+	}	
 }

@@ -24,10 +24,14 @@ namespace ArkanoidGame
 
 		const sf::Vector2f& GetPosition() const { return sprite.getPosition(); }
 
-		bool CheckCollisionWithWindowSides() const;
+		bool CheckCollisionWithWindowSides() const;		
+
+		//For Bonus
+		sf::Sprite& GetSprite() { return sprite; }
 
 	private:
 		void Move(float speed);
+
 	};
 
 }

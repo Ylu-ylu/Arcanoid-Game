@@ -10,8 +10,9 @@ namespace ArkanoidGame
 	{
 		using Super = SmoothDestroyableBlock;
 	public:
-		ThreeHitBlock(const sf::Vector2f & position);
+		ThreeHitBlock(const sf::Vector2f & position, int points=0);
 
+		bool ShouldBreakImmediately() const override;
 	private:
 
 		void OnHit(ColladiableType type, std::shared_ptr<Colladiable> collidableWhith) override;

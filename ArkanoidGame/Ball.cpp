@@ -5,6 +5,8 @@
 #include <algorithm>
 #include <random>
 #include "randomizer.h"
+#include "Block.h"
+
 
 namespace
 {
@@ -14,33 +16,33 @@ namespace
 
 namespace ArkanoidGame
 {
+
 	Ball::Ball(const sf::Vector2f& position)
-		: GameObject(GameObjectType::Ball, TEXTURES_PATH + TEXTURE_ID + ".png", position, BALL_SIZE, BALL_SIZE)
-	{	
+		: GameObject(GameObjectType::Ball, SETTINGS.TEXTURES_PATH + TEXTURE_ID + ".png", position, SETTINGS.BALL_SIZE, SETTINGS.BALL_SIZE)
+	{			
 		GetSize();
 		const float angle = 90;
 		const auto pi = std::acos(-1.f);
 		direction.x = std::cos(pi / 180.f * angle);
-		direction.y = std::sin(pi / 180.f * angle);		
+		direction.y = std::sin(pi / 180.f * angle);
 	}	
 
 	void Ball::Update(float timeDelta) 
 	{
-		const auto pos = sprite.getPosition() + BALL_SPEED * timeDelta * direction;
-		sprite.setPosition(pos);	
+		const auto pos = sprite.getPosition() + SETTINGS.BALL_SPEED *speedMultiplier* timeDelta * direction;
+		sprite.setPosition(pos);			
 
-		// Add to Ball class	
-
-		if (pos.x - BALL_SIZE / 2.f <= 0 || pos.x + BALL_SIZE / 2.f >= SCREEN_WIDTH) 
+		if (pos.x - SETTINGS.BALL_SIZE / 2.f <= 0 || pos.x + SETTINGS.BALL_SIZE / 2.f >= SETTINGS.SCREEN_WIDTH)
 		{
 			InvertDirectionX();
 		}
 
-		if (pos.y - BALL_SIZE / 2.f <= 0 || pos.y + BALL_SIZE / 2.f >= SCREEN_HEGHT)
+		if (pos.y - SETTINGS.BALL_SIZE / 2.f <= 0 || pos.y + SETTINGS.BALL_SIZE / 2.f >= SETTINGS.SCREEN_HEGHT)
 		{
 			InvertDirectionY();
-		}
-		BallInverse = false;		
+		}	
+		
+		Emit();
 	}	
 		
 	void Ball::InvertDirectionX()
@@ -55,27 +57,64 @@ namespace ArkanoidGame
 
 	float Ball::GetSize() const
 	{
-		return BALL_SIZE;
+		return SETTINGS.BALL_SIZE;
+	}
+
+	void Ball::SetDefaultState()
+	{
+		defaultTexture.loadFromFile(SETTINGS.TEXTURES_PATH + "ball.png");
+		// Visual changes
+		sprite.setTexture(defaultTexture, true); 
+		sprite.setColor(sf::Color::White);
+		sprite.setScale(1.5f, 1.5f);
+
+		// Gameplay changes
+		SetFireballMode(false);
+		SetSpeedMultiplier(1.f);		
+	}
+
+	void Ball::SetFireballState()
+	{
+		fireballTexture.loadFromFile(SETTINGS.TEXTURES_PATH + "FireBall.png");
+
+		// Visual changes
+		sprite.setTexture(fireballTexture, true);  // true = reset texture rect
+		sprite.setColor(sf::Color(255, 100, 0));   // Orange tint
+		sprite.setScale(0.25f, 0.25f);              // Slightly larger
+
+		// Gameplay changes
+		SetFireballMode(true);
+		SetSpeedMultiplier(1.5f);		
 	}
 
 	void Ball::OnHit(ColladiableType type, std::shared_ptr<Colladiable> collidableWhith)
-	{
-		if (type == ColladiableType::Hit|| type == ColladiableType::HitInverse)
+	{			
+		
+		// If in fireball mode and hitting a block, don't bounce off it
+		if (fireballMode && collidableWhith &&
+			dynamic_cast<Block*>(collidableWhith.get()) != nullptr) 
+		{
+			return;						
+		}
+		// If we get here, it's a normal collision (not fireball-block)
+		if (type == ColladiableType::Hit || type == ColladiableType::HitInverse)
 		{
 			lastAngle += random<float>(-5, 5);
 			ChangeAngle(lastAngle);
 		}
-		if(type == ColladiableType::HitInverse&& !BallInverse)
-		{
-			BallInverse = true;
 
-			bool needInverseDirX = false;
-			bool needInverseDirY = false;
+		if (type == ColladiableType::HitInverse)
+		{
+			bool needInverseDirX = true;
+			bool needInverseDirY = true;
 
 			const auto ballPos = GetPosition();
-			const auto blockRect = collidableWhith->GetRect();
 
-			GetBallInverse(ballPos, blockRect, needInverseDirX, needInverseDirY);
+			if (collidableWhith)
+			{
+				const auto blockRect = collidableWhith->GetRect();
+				GetBallInverse(ballPos, blockRect, needInverseDirX, needInverseDirY);
+			}
 
 			if (needInverseDirX)
 			{
@@ -85,11 +124,13 @@ namespace ArkanoidGame
 			{
 				InvertDirectionY();
 			}
-		}		
+		}
+		
 	}
 
 	void Ball::GetBallInverse(const sf::Vector2f& ballPos, const sf::FloatRect& blockRect, bool& needInverseDirX, bool& needInverseDirY)
-	{
+	{		
+		
 		if (ballPos.y > blockRect.top + blockRect.height)
 		{
 			needInverseDirY = true;
@@ -104,6 +145,23 @@ namespace ArkanoidGame
 		}
 	}		
 
+	ColladiableType Ball::GetCollision(std::shared_ptr<Colladiable> collidableObject) const
+	{
+		// If in fireball mode and the collidable is a Block, return Overlap instead of Hit
+		if (fireballMode && collidableObject)
+		{
+			Block* blockPtr = dynamic_cast<Block*>(collidableObject.get());
+			if (blockPtr) 
+			 {
+				// Return Overlap type to prevent bouncing
+				return ColladiableType::Overlap;
+			}
+		}
+
+		// Otherwise use the standard collision detection
+		return Colladiable::GetCollision(collidableObject);
+	}
+
 	void Ball::ChangeAngle(float angle)
 	{
 		lastAngle = angle;
@@ -114,10 +172,13 @@ namespace ArkanoidGame
 
 	void Ball::restart()
 	{
-		GameObject::restart();
+		GameObject::sprite.setPosition(SETTINGS.SCREEN_WIDTH / 2.f, SETTINGS.SCREEN_HEGHT / 2.f);
 		const float angle = 90;
 		const auto pi = std::acos(-1.f);
 		direction.x = std::cos(pi / 180.f * angle);
-		direction.y = std::sin(pi / 180.f * angle);			
+		direction.y = std::sin(pi / 180.f * angle);		
+
+		// Reset to default state when restarting
+		SetDefaultState();
 	}	
 }

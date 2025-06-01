@@ -21,13 +21,21 @@ namespace ArkanoidGame
 	{
 	public:
 		void StartGame();
-		void PauseGame();		
+		void PauseGame();	
+		void WinGame();
 		void LooseGame();		
 		void ExitGame();
 		void QuitGame();
 		void ShowRecords();		
 		void SetFinalScore(int finalScore) { m_finalScore = finalScore; }
 		int GetFinalScore() const { return m_finalScore; };
+		//
+		void LoadNextLevel();
+		void UpdateGame(float timeDelta, sf::RenderWindow& window);
+
+		//Sound
+		void SetSoundEnabled(bool enabled);
+		bool IsSoundEnabled() const;
 
 	public:
 		using RecordsTable = std::unordered_map<std::string, int>;
@@ -37,9 +45,9 @@ namespace ArkanoidGame
 
 		const RecordsTable& GetRecordsTable() const { return recordsTable; }
 		// Remove current game state from the stack
-		void PopState();
+		void PopState();	
 
-	public:
+	private:
 		void HandleWindowEvents(sf::RenderWindow& window);
 		bool Update(float timeDelta); // Return false if game should be closed
 		void Draw(sf::RenderWindow& window);
@@ -60,6 +68,9 @@ namespace ArkanoidGame
 
 		int m_finalScore = 0;		
 		RecordsTable recordsTable;
+
+		//Sound	settings
+		bool m_soundEnabled = true;
 	};
 		
 }

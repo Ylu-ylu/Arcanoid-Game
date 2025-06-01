@@ -10,6 +10,9 @@ namespace ArkanoidGame
 		Platform,
 		Block,
 		UnbreackableBlock,
+		FireBall,
+		FragileBlocks,
+		Bonus,
 		Other
 	};
 

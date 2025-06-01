@@ -7,8 +7,7 @@ using namespace ArkanoidGame;
 
 int main()
 {
-	Application::Instance().Run();
-	
+	Application::Instance().Run();	
 
 	return 0;
 }

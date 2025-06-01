@@ -161,11 +161,14 @@
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="Ball.cpp" />
     <ClCompile Include="Block.cpp" />
+    <ClCompile Include="BlockFactory.cpp" />
+    <ClCompile Include="Bonus.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GameState.cpp" />
     <ClCompile Include="GameStateData.cpp" />
     <ClCompile Include="GameStateGameWin.cpp" />
     <ClCompile Include="GlassBlock.cpp" />
+    <ClCompile Include="Leveles.cpp" />
     <ClCompile Include="Platform.cpp" />
     <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="Game.cpp" />
@@ -183,6 +186,8 @@
     <ClInclude Include="Application.h" />
     <ClInclude Include="Ball.h" />
     <ClInclude Include="Block.h" />
+    <ClInclude Include="BlockFactory.h" />
+    <ClInclude Include="Bonus.h" />
     <ClInclude Include="Colladiable.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GameState.h" />
@@ -190,6 +195,8 @@
     <ClInclude Include="GameStateGameWin.h" />
     <ClInclude Include="GlassBlock.h" />
     <ClInclude Include="IDelayedAction.h" />
+    <ClInclude Include="IObserver.h" />
+    <ClInclude Include="Leveles.h" />
     <ClInclude Include="Platform.h" />
     <ClInclude Include="randomizer.h" />
     <ClInclude Include="Sprite.h" />
